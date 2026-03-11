@@ -15,7 +15,7 @@ export default function Login() {
               {/* Email Input */}
               <div className="relative group">
                 <span className="absolute -top-3 left-6 px-2 bg-white text-base font-medium text-[#365885] z-10">
-                  Email
+                  Email 
                 </span>
                 <div className="relative">
                   <input
