@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Login from "./Login";
-import Register from "./Register";
+import LoginForm from "./Login";
+import RegisterForm from "./Register";
 
 export default function AuthTransition() {
   const [isActive, setIsActive] = useState(false);
@@ -30,9 +30,13 @@ export default function AuthTransition() {
 
         .form-box.login {
           left: 0;
+          visibility: visible;
+          transition: left 0.6s ease-in-out 1.2s, visibility 0s 0s;
         }
         .auth-container.active .form-box.login {
           left: 50%;
+          visibility: hidden;
+          transition: left 0.6s ease-in-out 1.2s, visibility 0s 1s;
         }
 
         .form-box.register {

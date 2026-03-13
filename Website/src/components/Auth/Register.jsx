@@ -1,174 +1,139 @@
 import { useState } from "react";
-import { User, EyeOff, Facebook, Eye, ChevronDown } from "lucide-react";
+import { User, EyeOff, Eye, Facebook, ChevronDown } from "lucide-react";
 
-export default function Register() {
+export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <section className="relative h-full flex items-center justify-center bg-[#D1DFEC]">
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full bg-white overflow-hidden">
-        {/* Left Side - Illustration */}
-        <div className="hidden lg:flex bg-gradient-to-br from-[#304B71] to-[#6492C9] items-center justify-center relative rounded-r-[200px] xl:rounded-r-[250px] overflow-hidden">
-          <div className="relative z-10 text-center flex flex-col items-center px-12 py-10 -space-y-16">
-            {/* Image - Reduced max-width to ensure centering and space for button */}
-            <div className="max-w-[380px] xl:max-w-[450px]">
-              <img
-                src="/Doctor_new.png"
-                alt="Doctor Illustration"
-                className="w-full h-auto object-contain"
+    <div className="flex flex-col justify-center px-16 py-6 w-full h-full">
+      <div className="max-w-xl w-full mx-auto text-center">
+        <h2 className="text-4xl font-semibold text-black mb-6">Registration</h2>
+
+        <div className="space-y-4">
+
+          {/* First & Last Name */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative group text-left">
+              <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
+                First name
+              </span>
+              <input
+                type="text"
+                className="w-full px-6 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
+                placeholder="First name"
               />
             </div>
+            <div className="relative group text-left">
+              <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
+                Last name
+              </span>
+              <input
+                type="text"
+                className="w-full px-6 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
+                placeholder="Last name"
+              />
+            </div>
+          </div>
 
-            <div className="mt-8 space-y-4">
-              <p className="text-white text-base font-medium opacity-80">
-                Already have an account?
+          {/* Email */}
+          <div className="relative group">
+            <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
+              Email
+            </span>
+            <div className="relative">
+              <input
+                type="email"
+                className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
+                placeholder="Email"
+              />
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885]">
+                <User size={24} />
+              </div>
+            </div>
+          </div>
+
+          {/* Password */}
+          <div className="relative group">
+            <label className="absolute -top-3 left-6 px-1.5 bg-white text-sm font-medium text-[#365885] z-10">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
+                placeholder="•••••••••••"
+              />
+              <div
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye size={24} /> : <EyeOff size={24} />}
+              </div>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative group">
+            <label className="absolute -top-3 left-6 px-1.5 bg-white text-sm font-medium text-[#365885] z-10">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
+                placeholder="•••••••••••"
+              />
+              <div
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] cursor-pointer"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <Eye size={24} /> : <EyeOff size={24} />}
+              </div>
+            </div>
+          </div>
+
+          {/* Account Type */}
+          <div className="relative group">
+            <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
+              Account type
+            </span>
+            <div className="relative">
+              <select className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base appearance-none bg-white">
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+                <option value="garde malade">Garde malade</option>
+              </select>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] pointer-events-none">
+                <ChevronDown size={24} />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <button className="w-full py-3.5 bg-[#6492C9] hover:bg-[#537db1] text-white text-lg font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer">
+              Continue
+            </button>
+
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs font-medium text-gray-500">
+                or register with social platforms
               </p>
-              <button className="px-16 py-3 border-[1.5px] border-white/60 rounded-2xl text-white text-lg font-semibold hover:bg-white/10 transition-all cursor-pointer uppercase tracking-wide">
-                LOGIN
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side - Form */}
-        <div className="flex flex-col justify-center px-16 py-6">
-          <div className="max-w-xl w-full mx-auto text-center">
-            <h2 className="text-4xl font-semibold text-black mb-6">Registration</h2>
-
-            <div className="space-y-4">
-              {/* First & Last Name Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative group text-left">
-                  <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
-                    First name
-                  </span>
-                  <input
-                    type="text"
-                    className="w-full px-6 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
-                    placeholder="First name"
-                  />
-                </div>
-                <div className="relative group text-left">
-                  <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
-                    Last name
-                  </span>
-                  <input
-                    type="text"
-                    className="w-full px-6 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
-                    placeholder="Last name"
-                  />
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="relative group">
-                <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
-                  Email
-                </span>
-                <div className="relative">
-                  <input
-                    type="email"
-                    className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
-                    placeholder="Email"
-                  />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885]">
-                    <User size={24} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="relative group">
-                <label className="absolute -top-3 left-6 px-1.5 bg-white text-sm font-medium text-[#365885] z-10">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
-                    placeholder="•••••••••••"
-                  />
-                  <div
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] cursor-pointer"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <Eye size={24} /> : <EyeOff size={24} />}
-                  </div>
-                </div>
-              </div>
-
-              {/* Confirm Password */}
-              <div className="relative group">
-                <label className="absolute -top-3 left-6 px-1.5 bg-white text-sm font-medium text-[#365885] z-10">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base"
-                    placeholder="•••••••••••"
-                  />
-                  <div
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] cursor-pointer"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <Eye size={24} /> : <EyeOff size={24} />}
-                  </div>
-                </div>
-              </div>
-
-              {/* Account Type */}
-              <div className="relative group">
-                <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
-                  Account type
-                </span>
-                <div className="relative">
-                  <select className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base appearance-none bg-white">
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="garde malade">Garde malade</option>
-                  </select>
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] pointer-events-none">
-                    <ChevronDown size={24} />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4 pt-2">
-                <button className="w-full py-3.5 bg-[#6492C9] hover:bg-[#537db1] text-white text-lg font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer">
-                  Continue
+              <div className="flex gap-4">
+                <button className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 rounded-[15px] hover:bg-gray-100 transition-all cursor-pointer shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+                    <path fill="#0a0a0aff" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
+                  </svg>
                 </button>
-
-                <div className="flex flex-col items-center gap-2">
-                  <p className="text-xs font-medium text-gray-500">
-                    or register with social platforms
-                  </p>
-
-                  <div className="flex gap-4">
-                    <button className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 rounded-[15px] hover:bg-gray-100 transition-all cursor-pointer shadow-sm">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 48 48"
-                        width="24"
-                        height="24"
-                      >
-                        <path
-                          fill="#0a0a0aff"
-                          d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-                        />
-                      </svg>
-                    </button>
-                    <button className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 rounded-[15px] hover:bg-gray-100 transition-all cursor-pointer shadow-sm">
-                      <Facebook size={24} fill="#000000ff" strokeWidth={0} />
-                    </button>
-                  </div>
-                </div>
+                <button className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 rounded-[15px] hover:bg-gray-100 transition-all cursor-pointer shadow-sm">
+                  <Facebook size={24} fill="#000000ff" strokeWidth={0} />
+                </button>
               </div>
             </div>
           </div>
+
         </div>
       </div>
-    </section>
+    </div>
   );
 }
