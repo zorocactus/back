@@ -136,11 +136,11 @@ export default function AuthTransition() {
           </div>
 
           <div className="toggle-panel toggle-right">
-            <div className="text-center flex flex-col items-center px-12 -mb-6">
+            <div className="text-center flex flex-col items-center px-12 -space-y-10  ">
               <div className="max-w-[480px]">
                 <img src="/Doctor_new.png" alt="Doctor" className="w-full h-auto object-contain" />
               </div>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <p className="text-white text-base font-medium opacity-80">Don't have an account?</p>
                 <button
                   onClick={() => setIsActive(true)}

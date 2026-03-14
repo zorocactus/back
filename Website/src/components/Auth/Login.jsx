@@ -52,14 +52,14 @@ export default function LoginForm() {
           <div className="flex justify-center">
             <a
               href="#"
-              className="-mt-7 text-sm font-medium text-gray-500 hover:text-[#365885] hover:underline transition-colors"
+              className="-mt-4 text-sm font-medium text-gray-500 hover:text-[#365885] hover:underline transition-colors"
             >
               Forgot password?
             </a>
           </div>
 
-          <div className="space-y-6">
-            <button className="w-full py-4 bg-[#6492C9] hover:bg-[#537db1] text-white text-xl font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer">
+          <div className="space-y-4">
+            <button className="w-full py-4 bg-[#6492C9] hover:bg-[#537db1] text-white text-xl font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer hover:scale-105">
               Login
             </button>
 

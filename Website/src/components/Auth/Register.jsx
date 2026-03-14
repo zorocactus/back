@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { User, EyeOff, Eye, Facebook, ChevronDown } from "lucide-react";
+import { User, EyeOff, Eye, Facebook } from "lucide-react";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [accountType, setAccountType] = useState("patient");
 
   return (
-    <div className="flex flex-col justify-center px-16 py-6 w-full h-full">
+    <div className="flex flex-col justify-center px-4 sm:px-16 py-6 w-full min-h-screen bg-white">
       <div className="max-w-xl w-full mx-auto text-center">
         <h2 className="text-4xl font-semibold text-black mb-6">Registration</h2>
 
@@ -96,26 +97,35 @@ export default function RegisterForm() {
           {/* Account Type */}
           <div className="relative group">
             <span className="absolute -top-3 left-6 px-2 bg-white text-sm font-medium text-[#365885] z-10">
-              Account type
+              Account type :
             </span>
-            <div className="relative">
-              <select className="w-full pl-6 pr-14 py-3.5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-base appearance-none bg-white">
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
-                <option value="garde malade">Garde malade</option>
-              </select>
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885] pointer-events-none">
-                <ChevronDown size={24} />
-              </div>
+            <div className="grid grid-cols-2 gap-3 animate-in slide-in-from-top duration-500">
+              {["patient", "personnel médical"].map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setAccountType(type)}
+                  className={`
+                    w-full py-3.5 rounded-[20px] border-[1.5px] transition-all text-sm font-medium cursor-pointer capitalize flex items-center justify-center mt-4 hover:scale-105 hover:shadow-sm hover:border-[#365885] hover:bg-cyan-200/20 hover:text-[#365885] 
+                    ${
+                      accountType === type
+                        ? "bg-[#365885]  border-[#365885] text-white shadow-sm"
+                        : "bg-white border-[#365885]/60 text-[#365885] hover:border-[#365885]"
+                    }
+                  `}
+                >
+                  {type}
+                </button>
+              ))}
             </div>
           </div>
 
           <div className="space-y-4 pt-2">
-            <button className="w-full py-3.5 bg-[#6492C9] hover:bg-[#537db1] text-white text-lg font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer">
+            <button className="w-full py-3.5 bg-[#6492C9] hover:bg-[#537db1] text-white text-lg font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer dlowd hover:scale-105">
               Continue
             </button>
 
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-4">
               <p className="text-xs font-medium text-gray-500">
                 or register with social platforms
               </p>
