@@ -109,11 +109,11 @@ export default function AuthTransition() {
       <div className={`auth-container${isActive ? " active" : ""}`}>
 
         <div className="form-box login">
-          <LoginForm />
+           <LoginForm key={isActive ? "login-hidden" : "login-visible"} />
         </div>
 
         <div className="form-box register">
-          <RegisterForm />
+          <RegisterForm key={isActive ? "register-hidden" : "register-visible"} />
         </div>
 
         <div className="toggle-box">

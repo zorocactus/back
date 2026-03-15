@@ -1,8 +1,24 @@
 import { useState } from "react";
 import { User, EyeOff, Eye, Facebook } from "lucide-react";
 
-export default function LoginForm() {
+export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errors, setErrors] = useState({})
+
+  function handleSubmit() {
+    const newErrors = {}
+    if (!email.trim())    newErrors.email = true
+    if (!password.trim()) newErrors.password = true
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+    setErrors({})
+    console.log("Form submitted")
+  }
 
   return (
     <div className="flex flex-col justify-center px-16 py-16 w-full h-full">
@@ -19,13 +35,18 @@ export default function LoginForm() {
             <div className="relative">
               <input
                 type="email"
-                className="w-full pl-6 pr-14 py-5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-lg"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className={`w-full pl-6 pr-14 py-5 rounded-[20px] border-[1.5px] ${errors["email"] ? "border-red-400" : "border-[#365885]/60"} hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-lg`}
                 placeholder="Email"
               />
               <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#365885]">
                 <User size={28} />
               </div>
             </div>
+            {errors["email"] && (
+              <p className="text-red-400 text-xs mt-1 ml-2">This field is required</p>
+            )}
           </div>
 
           {/* Password */}
@@ -36,7 +57,9 @@ export default function LoginForm() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full pl-6 pr-14 py-5 rounded-[20px] border-[1.5px] border-[#365885]/60 hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-lg"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className={`w-full pl-6 pr-14 py-5 rounded-[20px] border-[1.5px] ${errors["password"] ? "border-red-400" : "border-[#365885]/60"} hover:border-[#365885] focus:border-[#365885] focus:ring-0 transition-all outline-none text-gray-700 text-lg`}
                 placeholder="•••••••••••"
               />
               <div
@@ -46,6 +69,9 @@ export default function LoginForm() {
                 {showPassword ? <Eye size={28} /> : <EyeOff size={28} />}
               </div>
             </div>
+            {errors["password"] && (
+              <p className="text-red-400 text-xs mt-1 ml-2">This field is required</p>
+            )}
           </div>
 
           {/* Forgot password */}
@@ -59,7 +85,10 @@ export default function LoginForm() {
           </div>
 
           <div className="space-y-4">
-            <button className="w-full py-4 bg-[#6492C9] hover:bg-[#537db1] text-white text-xl font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer hover:scale-105">
+            <button 
+              onClick={handleSubmit}
+              className="w-full py-4 bg-[#6492C9] hover:bg-[#537db1] text-white text-xl font-semibold rounded-[20px] transition-all duration-200 shadow-sm cursor-pointer hover:scale-105"
+            >
               Login
             </button>
 
