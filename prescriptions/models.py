@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 from consultations.models import Consultation
+from medications.models import Medication
 
 class Prescription(models.Model):
 
@@ -56,6 +57,9 @@ class PrescriptionItem(models.Model):
 
     prescription = models.ForeignKey(
         Prescription, on_delete=models.CASCADE, related_name='items'
+    )
+    medication = models.ForeignKey(
+        Medication, on_delete=models.SET_NULL, null=True, blank=True, related_name='prescription_items'
     )
     drug_name    = models.CharField(max_length=200)       # ex: Metformin
     molecule     = models.CharField(max_length=200, blank=True)  # ex: Metformine HCl
@@ -116,7 +120,7 @@ class CNASCoverage(models.Model):
     )
     verified_at     = models.DateTimeField(null=True, blank=True)
     created_at      = models.DateTimeField(auto_now_add=True)
-
+'''
 class Medication(models.Model):
     """Catalogue des médicaments de la plateforme."""
 
@@ -150,4 +154,4 @@ class Medication(models.Model):
 
     def __str__(self):
         return f"{self.name} — {self.molecule}"
-    
+'''

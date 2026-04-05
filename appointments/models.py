@@ -89,30 +89,7 @@ class Appointment(models.Model):
             f"{self.patient} → Dr.{self.doctor.user.last_name} "
             f"({self.date} {self.start_time})"
         )
-# ── Notification ──────────────────────────────────────────────────────────────
 
-class Notification(models.Model):
-    NOTIFICATION_TYPES = [
-        ('booking', 'Réservation'),
-        ('status_change', 'Changement de statut'),
-        ('reminder', 'Rappel'),
-        ('general', 'Général'),
-    ]
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
-    message = models.CharField(max_length=255)
-    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default='general')
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    related_appointment = models.ForeignKey(Appointment, on_delete=models.SET_NULL, null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Notification"
-        verbose_name_plural = "Notifications"
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"Notif [{self.user.email}] - {self.message[:20]}"
 
 
 # ── Review ────────────────────────────────────────────────────────────────────

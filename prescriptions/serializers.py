@@ -1,20 +1,15 @@
 from rest_framework import serializers
-from .models import Prescription, PrescriptionItem, Medication, QRToken
-
-class MedicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Medication
-        fields = '__all__'
-
-class MedicationAutocompleteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Medication
-        fields = ['id', 'name', 'molecule', 'dosage_forms']
+from .models import Prescription, PrescriptionItem, QRToken
+from medications.models import Medication
 
 class PrescriptionItemSerializer(serializers.ModelSerializer):
+    medication = serializers.PrimaryKeyRelatedField(
+        queryset=Medication.objects.all(), required=False, allow_null=True
+    )
+    
     class Meta:
         model = PrescriptionItem
-        fields = ['id', 'drug_name', 'molecule', 'dosage', 'frequency', 'duration', 'instructions', 'quantity']
+        fields = ['id', 'medication', 'drug_name', 'molecule', 'dosage', 'frequency', 'duration', 'instructions', 'quantity']
 
 class QRTokenSerializer(serializers.ModelSerializer):
     class Meta:

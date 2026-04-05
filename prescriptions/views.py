@@ -17,11 +17,7 @@ from .permissions import IsDoctor, IsPharmacist, IsPrescriptionOwner
 from .services import QRCodeService, CNASService, PDFService
 from django.db.models import Q
 from pharmacy.models import PharmacyOrder
-from .models import Medication
-from .serializers import (
-    MedicationSerializer,
-    MedicationAutocompleteSerializer,
-)
+
 from pharmacy.serializers import (
     PharmacyOrderSerializer,
     PharmacyOrderCreateSerializer,
@@ -208,47 +204,7 @@ class QRScanView(APIView):
 
 
 
-# ── Nouvelles vues à ajouter après PrescriptionViewSet ──
 
-class MedicationViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    GET /api/medications/                    → liste (avec search)
-    GET /api/medications/<id>/               → profil complet du médicament
-    GET /api/medications/autocomplete/?q=met → suggestions autocomplétion
-    """
-    permission_classes = [IsAuthenticated]
-    serializer_class   = MedicationSerializer
-
-    def get_queryset(self):
-        qs    = Medication.objects.filter(is_active=True)
-        query = self.request.query_params.get('q', '').strip()
-        if query:
-            qs = qs.filter(
-                Q(name__icontains=query) | Q(molecule__icontains=query)
-            )
-        category = self.request.query_params.get('category')
-        if category:
-            qs = qs.filter(category=category)
-        return qs
-
-    @action(detail=False, methods=['get'], url_path='autocomplete')
-    def autocomplete(self, request):
-        """
-        GET /api/medications/autocomplete/?q=met
-        Retourne max 8 suggestions pour l'autocomplétion du médecin.
-        """
-        query = request.query_params.get('q', '').strip()
-        if len(query) < 2:
-            return Response([])
-
-        results = Medication.objects.filter(
-            is_active=True
-        ).filter(
-            Q(name__icontains=query) | Q(molecule__icontains=query)
-        ).order_by('name')[:8]
-
-        serializer = MedicationAutocompleteSerializer(results, many=True)
-        return Response(serializer.data)
 
 
 # ── Vues standalone (hors DRF) pour le rendu direct navigateur ───────────────

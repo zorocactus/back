@@ -18,9 +18,6 @@ from .views import (
     DoctorDailyScheduleView,
     DoctorPendingAppointmentsView,
 
-    # Notifications
-    NotificationListView,
-    NotificationMarkReadView,
 
     # Reviews
     CreateReviewView,
@@ -51,8 +48,4 @@ urlpatterns = [
     # ── Reviews ────────────────────────────────────────────────────────────────
     path('appointments/<int:pk>/review/', CreateReviewView.as_view(),      name='appointment-review'),
     path('doctors/<int:pk>/reviews/',     DoctorReviewListView.as_view(),  name='doctor-reviews'),
-
-    # ── Notifications ──────────────────────────────────────────────────────────
-    path('notifications/',                 NotificationListView.as_view(),      name='notification-list'),
-    path('notifications/<int:pk>/read/',   NotificationMarkReadView.as_view(),  name='notification-read'),
-]
+]

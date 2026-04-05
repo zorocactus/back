@@ -1,10 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import PrescriptionViewSet, MedicationViewSet, QRScanView, QRImageView, PrescriptionPDFView
+from .views import PrescriptionViewSet, QRScanView, QRImageView, PrescriptionPDFView
 
 router = DefaultRouter()
 router.register('prescriptions', PrescriptionViewSet, basename='prescription')
-router.register('medications', MedicationViewSet, basename='medication')
 
 urlpatterns = [
     # ⚠️ Les URLs custom AVANT le router — sinon prescriptions/{pk}/ avale tout

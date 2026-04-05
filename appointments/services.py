@@ -136,7 +136,6 @@ def book_appointment(*, patient, doctor: Doctor, date: date,
     Atomically validate and create an appointment.
     Raises ValueError with a user-friendly message on any conflict.
     """
-    from .models import Notification  # local import to avoid circular
 
     with transaction.atomic():
         # Lock all appointments for this doctor+date to prevent race conditions
@@ -178,12 +177,6 @@ def book_appointment(*, patient, doctor: Doctor, date: date,
             motif=motif,
         )
 
-        Notification.objects.create(
-            user=doctor.user,
-            message=f"Nouvelle demande de {patient.user.get_full_name()}.",
-            notification_type='booking',
-            related_appointment=appointment,
-        )
 
     return appointment
 

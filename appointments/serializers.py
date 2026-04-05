@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from patients.models import Patient
 from doctors.models import Doctor
-from .models import Appointment, Review, Notification
+from .models import Appointment, Review
 
 
 # ── Slot Serializers ─────────────────────────────────────────────
@@ -161,14 +161,6 @@ class AppointmentNotesSerializer(serializers.ModelSerializer):
         model  = Appointment
         fields = ['notes']
 
-
-# ── Notification Serializers ──────────────────────────────────────────────────
-
-class NotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notification
-        fields = ['id', 'message', 'notification_type', 'is_read', 'created_at', 'related_appointment']
-        read_only_fields = ['id', 'message', 'notification_type', 'created_at', 'related_appointment']
 
 
 # ── Review Serializers ────────────────────────────────────────────────────────
