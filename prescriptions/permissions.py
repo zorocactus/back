@@ -15,10 +15,10 @@ class IsPharmacist(BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and request.user.role == 'pharmacist')
 
-class IsCaregiver(BasePermission):
-    """Accès réservé aux gardes-malades."""
+class IsCaretaker(BasePermission):
+    """Accès réservé aux garde-malades."""
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and request.user.role == 'caregiver')
+        return bool(request.user and request.user.is_authenticated and request.user.role == 'caretaker')
 
 class IsPrescriptionOwner(BasePermission):
     """
@@ -37,10 +37,10 @@ class IsPrescriptionOwner(BasePermission):
         if role == 'pharmacist':
             # Un pharmacien peut voir s'il a reçu une commande liée
             return obj.pharmacy_orders.filter(pharmacist=request.user).exists()
-        if role == 'caregiver':
+        if role == 'caretaker':
             # Un garde-malade peut voir s'il s'occupe du patient
             try:
-                from caregiver.models import CaregiverAssignment
+                from caretaker.models import CaregiverAssignment
                 return CaregiverAssignment.objects.filter(
                     caregiver=request.user, 
                     patient=obj.consultation.patient, 
@@ -50,13 +50,13 @@ class IsPrescriptionOwner(BasePermission):
                 return False
         return False
 
-class IsCaregiverOfPatient(BasePermission):
+class IsCaretakerOfPatient(BasePermission):
     """Vérifie si le garde-malade est assigné au patient."""
     def has_object_permission(self, request, view, obj):
-        if getattr(request.user, 'role', None) != 'caregiver':
+        if getattr(request.user, 'role', None) != 'caretaker':
             return False
         try:
-            from caregiver.models import CaregiverAssignment
+            from caretaker.models import CaregiverAssignment
             # On suppose que obj a un attribut 'patient' ou passe par consultation
             patient = getattr(obj, 'patient', None)
             if not patient and hasattr(obj, 'consultation'):
