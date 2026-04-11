@@ -123,6 +123,7 @@ class AppointmentDoctorSerializer(serializers.ModelSerializer):
     Utilisé dans toutes les vues doctor/appointments/
     Ajoute refusal_reason et les infos patient complètes.
     """
+    patient_id      = serializers.IntegerField(source='patient.id', read_only=True)
     patient_name    = serializers.CharField(source='patient.user.get_full_name', read_only=True)
     patient_email   = serializers.EmailField(source='patient.user.email', read_only=True)
     patient_phone   = serializers.CharField(source='patient.phone_number', read_only=True)
@@ -133,6 +134,7 @@ class AppointmentDoctorSerializer(serializers.ModelSerializer):
         model  = Appointment
         fields = [
             'id',
+            'patient_id',
             'patient_name',
             'patient_email',
             'patient_phone',

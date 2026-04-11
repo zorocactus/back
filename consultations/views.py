@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from appointments.models import Appointment
 from appointments.permissions import IsDoctor
 from prescriptions.models import Prescription, PrescriptionItem, QRToken
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Consultation
 from .serializers import ConsultationSerializer
@@ -17,7 +18,13 @@ class ConsultationViewSet(viewsets.ModelViewSet):
     """CRUD standard des consultations."""
     queryset = Consultation.objects.select_related('doctor__user', 'patient__user', 'appointment').all()
     serializer_class = ConsultationSerializer
-    permission_classes = [IsDoctor]
+
+    def get_permissions(self):
+        # Patients can list/retrieve their own consultations (read-only)
+        # Only doctors can create, update, or delete
+        if self.action in ('create', 'update', 'partial_update', 'destroy'):
+            return [IsAuthenticated(), IsDoctor()]
+        return [IsAuthenticated()]
 
     def perform_create(self, serializer):
         consultation = serializer.save()
