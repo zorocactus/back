@@ -27,14 +27,15 @@ class PatientDashboardView(APIView):
         user = request.user
         today = timezone.now().date()
 
+        # IMP-07 fix : select_related pour éviter les N+1 sur doctor__user et caretaker__user
         upcoming_appts = Appointment.objects.filter(
             patient__user=user, date__gte=today, status__in=['scheduled', 'pending', 'confirmed']
-        ).order_by('date', 'start_time')[:3]
+        ).select_related('doctor__user').order_by('date', 'start_time')[:3]
 
         notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')[:5]
-        recent_docs = Consultation.objects.filter(patient__user=user).order_by('-created_at')[:3]
+        recent_docs = Consultation.objects.filter(patient__user=user).select_related('doctor__user').order_by('-created_at')[:3]
         active_orders = PharmacyOrder.objects.filter(patient=user).exclude(status__in=['completed', 'cancelled'])
-        active_care = CareRequest.objects.filter(patient=user, status='accepted').first()
+        active_care = CareRequest.objects.filter(patient=user, status='accepted').select_related('caretaker__user').first()
 
         data = {
             "upcoming_appointments": [
@@ -80,8 +81,9 @@ class DoctorDashboardView(APIView):
         user = request.user
         today = timezone.now().date()
 
-        today_appointments = Appointment.objects.filter(doctor__user=user, date=today)
-        pending_appointments = Appointment.objects.filter(doctor__user=user, status='pending')
+        # IMP-07 fix : select_related pour éviter les N+1 sur patient__user
+        today_appointments = Appointment.objects.filter(doctor__user=user, date=today).select_related('patient__user')
+        pending_appointments = Appointment.objects.filter(doctor__user=user, status='pending').select_related('patient__user')
 
         data = {
             "kpis": {
@@ -126,8 +128,9 @@ class PharmacistDashboardView(APIView):
 
         user = request.user
         today = timezone.now().date()
+        # IMP-07 fix : select_related sur medication (stock_alerts) et patient (recent_orders)
         today_orders = PharmacyOrder.objects.filter(pharmacist=user, created_at__date=today)
-        stock_alerts = PharmacyStock.objects.filter(pharmacist__user=user, quantity__lt=10)
+        stock_alerts = PharmacyStock.objects.filter(pharmacist__user=user, quantity__lt=10).select_related('medication')
 
         revenue_dict = today_orders.filter(status='delivered').aggregate(total=Sum('total_price'))
         today_revenue = revenue_dict['total'] or 0
@@ -153,7 +156,7 @@ class PharmacistDashboardView(APIView):
                     "status": o.status,
                     "created_at": o.created_at,
                 }
-                for o in PharmacyOrder.objects.filter(pharmacist=user).order_by('-created_at')[:5]
+                for o in PharmacyOrder.objects.filter(pharmacist=user).select_related('patient').order_by('-created_at')[:5]
             ],
         }
         return Response(data)
@@ -168,7 +171,8 @@ class CaretakerDashboardView(APIView):
             return Response({"error": "Accès refusé"}, status=status.HTTP_403_FORBIDDEN)
 
         user = request.user
-        my_requests = CareRequest.objects.filter(caretaker__user=user, status='accepted')
+        # IMP-07 fix : select_related sur patient pour éviter N+1 dans la liste
+        my_requests = CareRequest.objects.filter(caretaker__user=user, status='accepted').select_related('patient')
 
         data = {
             "my_patients": [

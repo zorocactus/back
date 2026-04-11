@@ -2,16 +2,19 @@
 Django settings for appointment_backend project.
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-change-this-in-production-use-env-variable'
+# IMP-16 fix : SECRET_KEY via variable d'environnement (fallback dev uniquement)
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production-use-env-variable')
 
-DEBUG = True  
+# IMP-13 fix : DEBUG désactivé par défaut — activer explicitement en dev via .env
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # ── Installed Apps ──────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -84,14 +87,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'medical_db',
-        'USER': 'postgres',
-        'PASSWORD': 'yassir',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    
-        },
-    }
+        # IMP-15 fix : credentials DB via variables d'environnement
+        'NAME': os.getenv('DB_NAME', 'medical_db'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'yassir'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+    },
+}
 
 
 
@@ -142,7 +145,11 @@ SIMPLE_JWT = {
 }
 
 # ── CORS (allow React dev server) ─────────────────────────────────────────────
-CORS_ALLOW_ALL_ORIGINS = True   # dev only — restrict in production
+# CORS : en dev CORS_ALLOW_ALL_ORIGINS=True via .env ; en prod pointer vers le domaine frontend
+if os.getenv('CORS_ALLOW_ALL', 'True') == 'True':
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
 
 # ── Internationalisation ──────────────────────────────────────────────────────
 LANGUAGE_CODE = 'fr-fr'

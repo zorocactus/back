@@ -25,7 +25,11 @@ from .views import (
     # Reviews
     CreateReviewView,
     DoctorReviewListView,
+
+    # Consultation start
+    StartConsultationView,
 )
+from patients.views import PatientRecordView
 
 urlpatterns = [
     # ── Availability (public) ─────────────────────────────────────────────
@@ -47,6 +51,12 @@ urlpatterns = [
     path('doctor/appointments/<int:pk>/confirm/',     views.ConfirmAppointmentView.as_view(),             name='appointment-confirm'),
     path('doctor/appointments/<int:pk>/refuse/',      views.RefuseAppointmentView.as_view(),              name='appointment-refuse'),
     path('doctor/appointments/<int:pk>/complete/',    views.CompleteAppointmentView.as_view(),            name='appointment-complete'),
+
+    # ── Consultation start (BUG-08) ───────────────────────────────────────────
+    path('appointments/<int:pk>/start/', StartConsultationView.as_view(), name='appointment-start'),
+
+    # ── Dossier patient complet (BUG-05) ─────────────────────────────────────
+    path('doctor/patients/<int:pk>/record/', PatientRecordView.as_view(), name='patient-record'),
 
     # ── Reviews ────────────────────────────────────────────────────────────────
     path('appointments/<int:pk>/review/', CreateReviewView.as_view(),      name='appointment-review'),

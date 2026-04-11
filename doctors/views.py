@@ -13,7 +13,13 @@ from .filters import DoctorFilter
 from appointments.permissions import IsDoctor
 
 
-class DoctorListView(generics.ListAPIView):
+class DoctorBaseView:
+    """Base class to factorize common doctor queryset with optimization."""
+    def get_queryset(self):
+        return Doctor.objects.select_related('user').prefetch_related('schedules', 'days_off')
+
+
+class DoctorListView(DoctorBaseView, generics.ListAPIView):
     """GET /api/doctors/ — search doctors with filters."""
     serializer_class = DoctorListSerializer
     permission_classes = [IsAuthenticated]
@@ -22,20 +28,16 @@ class DoctorListView(generics.ListAPIView):
     ordering_fields = ['rating', 'experience_years']
     ordering = ['-rating']
 
-    def get_queryset(self):
-        return Doctor.objects.select_related('user').prefetch_related('schedules', 'days_off')
-
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['filter_date'] = self.request.query_params.get('date')
         return context
 
 
-class DoctorDetailView(generics.RetrieveAPIView):
+class DoctorDetailView(DoctorBaseView, generics.RetrieveAPIView):
     """GET /api/doctors/{id}/ — full doctor profile."""
     serializer_class = DoctorDetailSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Doctor.objects.select_related('user').prefetch_related('schedules', 'days_off')
 
 
 class DoctorProfileView(generics.RetrieveUpdateAPIView):

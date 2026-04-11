@@ -60,6 +60,11 @@ class AdminUserManagementViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def reject_professional(self, request, pk=None):
         """Bouton 'Rejeter' sur la liste d'attente"""
+        # IMP-05 fix : user n'était pas fetché → NameError garanti
+        user = self.get_object()
+        # IMP-06 fix : reason n'était pas défini → KeyError dans le f-string
+        reason = request.data.get('reason', 'Non spécifié')
+
         user.verification_status = 'rejected'
         user.save()
 
@@ -81,7 +86,7 @@ class AdminUserManagementViewSet(viewsets.ModelViewSet):
             notification_type=Notification.NotificationType.SYSTEM
         )
         create_audit_log(f"Inscription rejetée pour {user.email}", AuditLog.Level.WARNING, request)
-        
+
         return Response({"status": "Utilisateur rejeté. Notification envoyée."})
 
     @action(detail=True, methods=['post'])

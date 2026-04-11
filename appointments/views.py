@@ -382,3 +382,43 @@ class DoctorReviewListView(generics.ListAPIView):
     def get_queryset(self):
         doctor_id = self.kwargs['pk']
         return Review.objects.filter(doctor_id=doctor_id).order_by('-created_at')
+
+
+# ── Consultation start ────────────────────────────────────────────────────────
+
+class StartConsultationView(APIView):
+    """
+    PATCH /api/appointments/{id}/start/
+    BUG-08 fix : démarre une consultation — crée un brouillon Consultation lié au RDV.
+    Retourne l'objet appointment + consultation_id.
+    """
+    permission_classes = [IsDoctor]
+
+    def patch(self, request, pk):
+        try:
+            appt = Appointment.objects.get(pk=pk, doctor=request.user.doctor_profile)
+        except Appointment.DoesNotExist:
+            return Response({"detail": "Rendez-vous introuvable."}, status=status.HTTP_404_NOT_FOUND)
+
+        if appt.status != 'confirmed':
+            return Response(
+                {"detail": "Seuls les rendez-vous confirmés peuvent être démarrés."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        from consultations.models import Consultation
+        consultation, _ = Consultation.objects.get_or_create(
+            appointment=appt,
+            defaults={
+                'doctor':         appt.doctor,
+                'patient':        appt.patient,
+                'chief_complaint': appt.motif,
+                'consulted_at':   timezone.now(),
+                'status':         Consultation.Status.IN_PROGRESS,
+            },
+        )
+
+        return Response(
+            {**AppointmentDoctorSerializer(appt).data, 'consultation_id': str(consultation.id)},
+            status=status.HTTP_200_OK,
+        )

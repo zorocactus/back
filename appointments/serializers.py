@@ -166,10 +166,11 @@ class AppointmentNotesSerializer(serializers.ModelSerializer):
 # ── Notification Serializers ──────────────────────────────────────────────────
 
 class NotificationSerializer(serializers.ModelSerializer):
+    """BUG-20 fix : ajout du champ 'title' manquant (présent dans notifications.models.Notification)."""
     class Meta:
         model = Notification
-        fields = ['id', 'message', 'notification_type', 'is_read', 'created_at', 'related_appointment']
-        read_only_fields = ['id', 'message', 'notification_type', 'created_at', 'related_appointment']
+        fields = ['id', 'title', 'message', 'notification_type', 'is_read', 'created_at', 'related_appointment']
+        read_only_fields = ['id', 'title', 'message', 'notification_type', 'created_at', 'related_appointment']
 
 
 # ── Review Serializers ────────────────────────────────────────────────────────
