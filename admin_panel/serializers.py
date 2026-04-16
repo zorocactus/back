@@ -1,18 +1,64 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import AuditLog
 
+# Import des modèles pour les profils détaillés
+from patients.models import Patient, MedicalProfile, Antecedent
+from doctors.models import Doctor, WeeklySchedule, DoctorQualification
+from appointments.models import Appointment
+
 User = get_user_model()
+
+# ─── Profils Détaillés pour l'Admin ───────────────────────────────────────────
+
+class AdminAntecedentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Antecedent
+        fields = ['id', 'name', 'type', 'description', 'date_diagnosis']
+
+class AdminMedicalProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalProfile
+        fields = ['weight', 'height', 'allergies', 'chronic_diseases', 'current_medications']
+
+class AdminPatientProfileSerializer(serializers.ModelSerializer):
+    medical_profile = AdminMedicalProfileSerializer(read_only=True)
+    antecedents = AdminAntecedentSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Patient
+        fields = ['medical_history', 'blood_group', 'medical_profile', 'antecedents']
+
+class AdminScheduleSerializer(serializers.ModelSerializer):
+    day_display = serializers.CharField(source='get_day_of_week_display', read_only=True)
+    class Meta:
+        model = WeeklySchedule
+        fields = ['id', 'day_of_week', 'day_display', 'start_time', 'end_time', 'slot_duration', 'is_active']
+
+class AdminDoctorProfileSerializer(serializers.ModelSerializer):
+    schedules = AdminScheduleSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Doctor
+        fields = [
+            'specialty', 'license_number', 'clinic_name', 'experience_years', 
+            'bio', 'consultation_fee', 'rating', 'total_reviews', 'schedules'
+        ]
 
 class AdminUserSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_full_name', read_only=True)
     submitted_documents = serializers.SerializerMethodField()
     
+    # Données étendues selon le rôle
+    doctor_detail = AdminDoctorProfileSerializer(source='doctor_profile', read_only=True)
+    patient_detail = AdminPatientProfileSerializer(source='patient_profile', read_only=True)
+    
     class Meta:
         model = User
         fields = [
-            'id', 'full_name', 'email', 'role', 'is_active', 
-            'verification_status', 'date_joined', 'submitted_documents'
+            'id', 'full_name', 'first_name', 'last_name', 'email', 'role', 
+            'is_active', 'verification_status', 'date_joined', 'phone',
+            'city', 'wilaya', 'address', 'submitted_documents',
+            'doctor_detail', 'patient_detail'
         ]
 
     def get_submitted_documents(self, obj):

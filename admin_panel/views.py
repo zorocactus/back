@@ -1,13 +1,25 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import BasePermission
 from django_filters.rest_framework import DjangoFilterBackend
+
+
+class IsSuperuserOrAdmin(BasePermission):
+    """Autorise uniquement les superusers (is_superuser=True).
+    is_staff seul ne suffit pas — un compte staff compromis ne doit pas
+    avoir accès aux actions d'administration sensibles."""
+    def has_permission(self, request, _view):
+        return bool(request.user and request.user.is_authenticated and request.user.is_superuser)
 from django.contrib.auth import get_user_model
 
 from .models import AuditLog
 from .serializers import AdminUserSerializer, AuditLogSerializer
-from notifications.models import Notification # Toujours lié à tes supers notifications
+from notifications.models import Notification
+from appointments.models import Appointment
+from consultations.models import Consultation
+from appointments.serializers import AppointmentDoctorSerializer # On réutilise pour le planning
+from consultations.serializers import ConsultationSerializer # On réutilise pour la file d'attente
 
 User = get_user_model()
 
@@ -20,7 +32,7 @@ class AdminUserManagementViewSet(viewsets.ModelViewSet):
     """Endpoints pour 'Validation des inscriptions' et 'Gestion Utilisateurs'"""
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = AdminUserSerializer
-    permission_classes = [IsAdminUser] # Seulement accessible aux superusers
+    permission_classes = [IsSuperuserOrAdmin] # Seulement accessible aux superusers
     
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['role', 'verification_status', 'is_active']
@@ -120,7 +132,38 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """Endpoint pour l'écran 'Journal d'Audit'"""
     queryset = AuditLog.objects.all()
     serializer_class = AuditLogSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsSuperuserOrAdmin]
     
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['level']
+
+# ─── NOUVEAUX ENDPOINTS ADMIN ────────────────────────────────────────────────
+
+class AdminAppointmentViewSet(viewsets.ModelViewSet):
+    """Accès total aux rendez-vous pour le planning global"""
+    queryset = Appointment.objects.all().select_related('doctor__user', 'patient__user')
+    serializer_class = AppointmentDoctorSerializer
+    permission_classes = [IsSuperuserOrAdmin]
+    
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['doctor', 'date', 'status']
+    ordering_fields = ['date', 'start_time']
+
+class AdminQueueViewSet(viewsets.ModelViewSet):
+    """Gestion de la file d'attente consultation (Consultation Flow)"""
+    queryset = Consultation.objects.all().select_related('doctor__user', 'patient__user')
+    serializer_class = ConsultationSerializer
+    permission_classes = [IsSuperuserOrAdmin]
+    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['status', 'doctor']
+
+    @action(detail=True, methods=['post'])
+    def update_status(self, request, pk=None):
+        cons = self.get_object()
+        new_status = request.data.get('status')
+        if new_status in Consultation.Status.values:
+            cons.status = new_status
+            cons.save()
+            return Response({"status": "Statut mis à jour"})
+        return Response({"error": "Statut invalide"}, status=400)
